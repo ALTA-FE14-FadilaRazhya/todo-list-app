@@ -2,6 +2,7 @@ import React, { createContext, useReducer } from "react";
 import {
   ActionTypeEnum,
   AddActionProps,
+  AddUpdateProps,
   DeleteActProps,
   ReducerActProps,
   TaskProps,
@@ -12,6 +13,7 @@ import { clone } from "./utility";
 
 export const TodoContext = createContext<TodoContextProps>({
   activeTask: [],
+  completeTask: [],
   dispatch: () => {},
 });
 
@@ -31,6 +33,18 @@ const deleteTaskAction = (state: TodoStateProps, action: DeleteActProps) => {
   return filteredData;
 };
 
+const updateTaskAction = (state: TodoStateProps, action: AddUpdateProps) => {
+  // Task index
+  // Update new data
+  // return new state
+
+  const cloneActiveTask: TaskProps[] = clone(state.activeTask);
+  const index = cloneActiveTask.findIndex((x) => x.id === action.data.id);
+  if (index >=0 ) {
+    cloneActiveTask[index] = action.data;
+  } 
+  return cloneActiveTask;
+};
 const reducer = (state: TodoStateProps, action: ReducerActProps) => {
   switch (action.type) {
     case ActionTypeEnum.Add:
@@ -41,6 +55,8 @@ const reducer = (state: TodoStateProps, action: ReducerActProps) => {
         (task) => task.id !== action.data.id
       );
       return { ...state, activeTask: deleteTaskAction(state, action) };
+    case ActionTypeEnum.Update:
+      return { ...state, activeTask: updateTaskAction(state, action) };
   }
   return { ...state };
 };
@@ -61,11 +77,11 @@ const ToDoProvider = (props: Props) => {
     },
   ];
 
-  const data = { activeTask: tasklist };
+  const data: TodoStateProps = { activeTask: tasklist, completeTask: [] };
   const [state, dispatch] = useReducer(reducer, data);
 
   return (
-    <TodoContext.Provider value={{ activeTask: state.activeTask, dispatch }}>
+    <TodoContext.Provider value={{ activeTask: state.activeTask, completeTask:[], dispatch }}>
       {props.children}
     </TodoContext.Provider>
   );

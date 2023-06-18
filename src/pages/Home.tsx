@@ -1,7 +1,7 @@
 import React, { createContext, useState } from "react";
 import { Label, Pivot, PivotItem, Stack } from "@fluentui/react";
 import { PivotKeysEnum, TaskProps } from "../components/Type";
-import List from "../components/List";
+import List from "./List";
 
 import { initializeIcons } from "@fluentui/font-icons-mdl2";
 import ToDoProvider from "../components/ToDoProvider";
@@ -10,11 +10,17 @@ initializeIcons();
 
 const Home = () => {
   const [selectedKey, setSelectedKey] = useState<string>(PivotKeysEnum.Tasks);
+  const [editTaskId, setEditTaskId] = useState<string | null>(null);
+
+  const editTask = (id: string) => {
+    setEditTaskId(id);
+    setSelectedKey(PivotKeysEnum.TaskForm);
+  };
 
   return (
     <Stack
-      className="container-center absolute w-[60%] h-[80%] translate-y-[-50%] 
-    translate-x-[-50%] border shadow-lg rounded-md shadow-slate-500/50 m-10"
+      className="container-center absolute w-[46%] h-[80%] translate-y-[-50%] 
+    translate-x-[-50%] border shadow-lg rounded-md shadow-slate-500/50 mt-5"
     >
       <ToDoProvider>
         <header className="relative bg-emerald-300 w-full h-[80px]">
@@ -28,14 +34,16 @@ const Home = () => {
             selectedKey={String(selectedKey)}
             styles={{ root: { display: "flex", justifyContent: "center" } }}
             onLinkClick={(item?: PivotItem) => {
-              setSelectedKey(item?.props.itemKey || PivotKeysEnum.Tasks);
+              if (item?.props.itemKey !== PivotKeysEnum.TaskForm) {
+              }
+              setSelectedKey(item?.props.itemKey || PivotKeysEnum.Task);
             }}
           >
             <PivotItem headerText="Task" itemKey={PivotKeysEnum.Tasks}>
-              <List />
+              <List setEditTask={editTask} />
             </PivotItem>
             <PivotItem headerText="Task Form" itemKey={PivotKeysEnum.TaskForm}>
-              <FormTask />
+              <FormTask editTaskId={editTaskId} />
             </PivotItem>
             <PivotItem headerText="Complete" itemKey={PivotKeysEnum.Completed}>
               <Label className="m-10">Pivot #3</Label>

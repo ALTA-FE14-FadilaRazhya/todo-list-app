@@ -10,16 +10,28 @@ import useInput from "../components/useInput";
 import { TodoContext } from "../components/ToDoProvider";
 import { ActionTypeEnum, TaskProps } from "../components/Type";
 
-const FormTask = () => {
-  const { dispatch } = useContext(TodoContext);
+type Props = {
+  editTaskId: string | null;
+};
+const FormTask = ({ editTaskId }: Props) => {
+  const { activeTask, dispatch } = useContext(TodoContext);
+
+  const title = useInput("");
+  const description = useInput("");
+
+  useEffect(() => {
+    if (editTaskId) {
+      const taskData = activeTask.find((task) => task.id === editTaskId);
+
+      title.set(taskData?.title || "");
+      description.set(taskData?.description || "");
+    }
+  }, [editTaskId]);
 
   const [showMessage, setShowMessage] = useState<{
     type: MessageBarType;
     message: string;
   }>({ type: MessageBarType.success, message: "" });
-
-  const title = useInput("");
-  const description = useInput("");
 
   useEffect(() => {
     if (showMessage.message) {
@@ -29,9 +41,7 @@ const FormTask = () => {
     }
   }, [showMessage.message]);
 
-  const onSubmitForm = (event: React.FormEvent) => {
-    event.preventDefault();
-
+  const addTaskAction = () => {
     const data: TaskProps = {
       id: "",
       title: title.value,
@@ -42,6 +52,36 @@ const FormTask = () => {
       type: MessageBarType.success,
       message: "Task succesfully added!",
     });
+    title.set("");
+    description.set("");
+  };
+
+  const updateTaskAction = () => {
+    const taskData = activeTask.find((task) => task.id === editTaskId);
+    if (taskData) {
+      const data: TaskProps = {
+        id: taskData.id,
+        title: title.value,
+        description: description.value,
+      };
+
+      dispatch({ type: ActionTypeEnum.Update, data });
+      setShowMessage({
+        type: MessageBarType.success,
+        message: "Task succesfully updated!",
+      });
+    } else {
+      setShowMessage({
+        type: MessageBarType.error,
+        message: "Error while updating data",
+      });
+    }
+  };
+
+  const onSubmitForm = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    editTaskId ? updateTaskAction() : addTaskAction();
   };
 
   return (
@@ -52,7 +92,7 @@ const FormTask = () => {
         <Stack style={{ width: "80%" }}>
           {showMessage.message && (
             <MessageBar messageBarType={MessageBarType.success}>
-              Task succesfully added!
+              {showMessage.message}
             </MessageBar>
           )}
         </Stack>

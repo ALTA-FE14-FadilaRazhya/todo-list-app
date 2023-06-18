@@ -8,7 +8,11 @@ const useInput = (initalValue: string) => {
     setValue(event.currentTarget.value);
   };
 
-  return {value, onChange}
+  const set = (data : string) => {
+    setValue(data)
+  }
+
+  return {value, onChange, set}
 };
 
 export default useInput;

@@ -7,6 +7,7 @@ import {
 interface ListStyleProps {
   listItem: IStyle;
   iconStyle: IStyle;
+  disabled: IStyle
 }
 const ListStyleSet: IProcessedStyleSet<ListStyleProps> = mergeStyleSets({
   listItem: {
@@ -29,9 +30,15 @@ const ListStyleSet: IProcessedStyleSet<ListStyleProps> = mergeStyleSets({
     fontSize: 20,
     margin: "0 3px",
     selectors: {
-        "&:hover": { cursor: "pointer"},
-      },
-  }
+      "&:hover": { cursor: "pointer" },
+    },
+  },
+  disabled: {
+    color: "#cbd5e1",
+    selectors: {
+      "&:hover": { cursor: "default" },
+    },
+  },
 });
 
 export default ListStyleSet;

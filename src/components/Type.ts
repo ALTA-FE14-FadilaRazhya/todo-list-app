@@ -4,6 +4,8 @@ export enum PivotKeysEnum {
   Tasks = "Tasks",
   TaskForm = "TaskForm",
   Completed = "CompletedTasks",
+  FormTask = "FormTask",
+  Task = "Task",
 }
 
 export interface TaskProps {
@@ -14,19 +16,27 @@ export interface TaskProps {
 
 export interface TodoContextProps {
   activeTask: TaskProps[];
+  completeTask: TaskProps[];
   dispatch: Dispatch<any>;
 }
 
 export interface TodoStateProps {
   activeTask: TaskProps[];
+  completeTask: TaskProps[];
 }
 
 export enum ActionTypeEnum {
   Add,
   Delete,
+  Update,
+  Completed,
 }
 
-export type ReducerActProps = AddActionProps | DeleteActProps
+export type ReducerActProps =
+  | AddActionProps
+  | DeleteActProps
+  | AddUpdateProps
+  | CompleteActionProps;
 
 export interface AddActionProps {
   type: ActionTypeEnum.Add;
@@ -35,5 +45,15 @@ export interface AddActionProps {
 
 export interface DeleteActProps {
   type: ActionTypeEnum.Delete;
+  data: { id: string };
+}
+
+export interface AddUpdateProps {
+  type: ActionTypeEnum.Update;
+  data: TaskProps;
+}
+
+export interface CompleteActionProps {
+  type: ActionTypeEnum.Completed;
   data: { id: string };
 }
