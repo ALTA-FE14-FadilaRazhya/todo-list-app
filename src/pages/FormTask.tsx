@@ -8,6 +8,7 @@ import {
 import React, { useContext, useEffect, useState } from "react";
 import useInput from "../components/useInput";
 import { TodoContext } from "../components/ToDoProvider";
+import { ActionTypeEnum, TaskProps } from "../components/Type";
 
 const FormTask = () => {
   const { dispatch } = useContext(TodoContext);
@@ -30,8 +31,13 @@ const FormTask = () => {
 
   const onSubmitForm = (event: React.FormEvent) => {
     event.preventDefault();
-    const data = { title: title.value, description: description.value };
-    dispatch({ type: "add", data });
+
+    const data: TaskProps = {
+      id: "",
+      title: title.value,
+      description: description.value,
+    };
+    dispatch({ type: ActionTypeEnum.Add, data });
     setShowMessage({
       type: MessageBarType.success,
       message: "Task succesfully added!",
