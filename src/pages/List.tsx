@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { Stack } from "@fluentui/react";
+import { useContext } from "react";
+import { MessageBar, Stack } from "@fluentui/react";
 import ListStyleSet from "../components/ListStyle.set";
 import { FontIcon } from "@fluentui/react";
 
@@ -21,16 +21,21 @@ const List = ({ setEditTask }: Props) => {
     }
   };
 
-  const checkboxClickedHdl = (id: string) =>{
-    dispatch ({ type: ActionTypeEnum.Completed, data: { id }});
-  }
+  const checkboxClickedHdl = (id: string) => {
+    dispatch({ type: ActionTypeEnum.Completed, data: { id } });
+  };
+
   const onRenderCell = (task: TaskProps) => {
     return (
       <Stack horizontal key={task.id} className={ListStyleSet.listItem}>
         <Stack horizontal className="w-[85%]">
-          <input type="checkbox" className="checkbox mr-2" onChange={() => {
-            checkboxClickedHdl(task.id)
-          }} />
+          <input
+            type="checkbox"
+            className="checkbox mr-2"
+            onChange={() => {
+              checkboxClickedHdl(task.id);
+            }}
+          />
           {task.title}
         </Stack>
         <Stack horizontal className="w-[15%]">
@@ -52,7 +57,15 @@ const List = ({ setEditTask }: Props) => {
     );
   };
 
-  return <div className="m-10">{activeTask.map(onRenderCell)}</div>;
+  return (
+    <div className="m-10">
+      {activeTask.length ? (
+        activeTask.map(onRenderCell)
+      ) : (
+        <MessageBar>No tasks to show</MessageBar>
+      )}
+    </div>
+  );
 };
 
 export default List;

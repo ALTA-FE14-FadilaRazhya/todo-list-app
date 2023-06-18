@@ -3,6 +3,7 @@ import {
   ActionTypeEnum,
   AddActionProps,
   AddUpdateProps,
+  CompleteActionProps,
   DeleteActProps,
   ReducerActProps,
   TaskProps,
@@ -28,8 +29,14 @@ const addTaskAction = (state: TodoStateProps, action: AddActionProps) => {
 };
 
 const deleteTaskAction = (state: TodoStateProps, action: DeleteActProps) => {
-  const activeTask: TaskProps[] = JSON.parse(JSON.stringify(state.activeTask));
+  const activeTask: TaskProps[] = clone(state.activeTask);
   const filteredData = activeTask.filter((task) => task.id !== action.data.id);
+  return filteredData;
+};
+
+const deleteCompletedTaskAction = (state: TodoStateProps, action: DeleteActProps) => {
+  const completeTask: TaskProps[] = clone(state.completeTask);
+  const filteredData = completeTask.filter((task) => task.id !== action.data.id);
   return filteredData;
 };
 
@@ -40,11 +47,31 @@ const updateTaskAction = (state: TodoStateProps, action: AddUpdateProps) => {
 
   const cloneActiveTask: TaskProps[] = clone(state.activeTask);
   const index = cloneActiveTask.findIndex((x) => x.id === action.data.id);
-  if (index >=0 ) {
+  if (index >= 0) {
     cloneActiveTask[index] = action.data;
-  } 
+  }
   return cloneActiveTask;
 };
+
+const completedTaskAction = (
+  state: TodoStateProps,
+  action: CompleteActionProps
+) => {
+  const activeTask: TaskProps[] = clone(state.activeTask);
+  const completedTaskData = activeTask.find(
+    (task) => task.id === action.data.id
+  );
+  const filteredData = activeTask.filter((task) => task.id !== action.data.id);
+
+  const completeTask = completedTaskData
+    ? [completedTaskData, ...state.completeTask]
+    : [...state.completeTask];
+  return {
+    activeTask: filteredData,
+    completeTask,
+  };
+};
+
 const reducer = (state: TodoStateProps, action: ReducerActProps) => {
   switch (action.type) {
     case ActionTypeEnum.Add:
@@ -55,8 +82,17 @@ const reducer = (state: TodoStateProps, action: ReducerActProps) => {
         (task) => task.id !== action.data.id
       );
       return { ...state, activeTask: deleteTaskAction(state, action) };
+    case ActionTypeEnum.DeleteCompletedTask:
+      return { ...state, completedTaskAction: deleteCompletedTaskAction(state, action) };
     case ActionTypeEnum.Update:
       return { ...state, activeTask: updateTaskAction(state, action) };
+    case ActionTypeEnum.Completed:
+      const data = completedTaskAction(state, action);
+      return {
+        ...state,
+        activeTask: data.activeTask,
+        completeTask: data.completeTask,
+      };
   }
   return { ...state };
 };
@@ -81,7 +117,13 @@ const ToDoProvider = (props: Props) => {
   const [state, dispatch] = useReducer(reducer, data);
 
   return (
-    <TodoContext.Provider value={{ activeTask: state.activeTask, completeTask:[], dispatch }}>
+    <TodoContext.Provider
+      value={{
+        activeTask: state.activeTask,
+        completeTask: state.completeTask,
+        dispatch,
+      }}
+    >
       {props.children}
     </TodoContext.Provider>
   );

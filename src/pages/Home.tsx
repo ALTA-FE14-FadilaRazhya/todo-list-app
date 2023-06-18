@@ -1,11 +1,12 @@
-import React, { createContext, useState } from "react";
-import { Label, Pivot, PivotItem, Stack } from "@fluentui/react";
-import { PivotKeysEnum, TaskProps } from "../components/Type";
+import { useState } from "react";
+import { Pivot, PivotItem, Stack } from "@fluentui/react";
+import { PivotKeysEnum } from "../components/Type";
 import List from "./List";
 
 import { initializeIcons } from "@fluentui/font-icons-mdl2";
 import ToDoProvider from "../components/ToDoProvider";
 import FormTask from "./FormTask";
+import CompletedTaskList from "./CompletedTaskList";
 initializeIcons();
 
 const Home = () => {
@@ -46,7 +47,7 @@ const Home = () => {
               <FormTask editTaskId={editTaskId} />
             </PivotItem>
             <PivotItem headerText="Complete" itemKey={PivotKeysEnum.Completed}>
-              <Label className="m-10">Pivot #3</Label>
+              <CompletedTaskList />
             </PivotItem>
           </Pivot>
         </Stack>

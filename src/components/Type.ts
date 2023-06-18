@@ -30,6 +30,7 @@ export enum ActionTypeEnum {
   Delete,
   Update,
   Completed,
+  DeleteCompletedTask
 }
 
 export type ReducerActProps =
@@ -44,7 +45,7 @@ export interface AddActionProps {
 }
 
 export interface DeleteActProps {
-  type: ActionTypeEnum.Delete;
+  type: ActionTypeEnum.Delete | ActionTypeEnum.DeleteCompletedTask;
   data: { id: string };
 }
 

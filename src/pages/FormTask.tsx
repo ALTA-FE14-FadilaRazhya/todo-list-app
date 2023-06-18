@@ -57,6 +57,14 @@ const FormTask = ({ editTaskId }: Props) => {
   };
 
   const updateTaskAction = () => {
+    const data: TaskProps = {
+      id: editTaskId || "",
+      title: title.value,
+      description: description.value,
+    };
+  }
+
+  const onFormSubmit = () => {
     const taskData = activeTask.find((task) => task.id === editTaskId);
     if (taskData) {
       const data: TaskProps = {
@@ -82,6 +90,7 @@ const FormTask = ({ editTaskId }: Props) => {
     event.preventDefault();
 
     editTaskId ? updateTaskAction() : addTaskAction();
+
   };
 
   return (
